@@ -15,10 +15,19 @@ const PriceChart: React.FC<PriceChartProps> = ({ history }) => {
   };
 
   return (
-    <div className="bg-surface-0 p-6 rounded-lg shadow-lg border border-surface-1 h-[400px]">
+    <div className="bg-surface/50 border border-card-border rounded-2xl p-6 shadow-lg backdrop-blur-sm h-[400px]">
       <h3 className="font-bold text-xl mb-4 text-text-primary">Price History (Last Hour)</h3>
       <ResponsiveContainer width="100%" height="85%">
         <LineChart data={history}>
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#2A2A34" />
           <XAxis dataKey="time" stroke="#A0A0B0" fontSize={12} />
           <YAxis stroke="#A0A0B0" fontSize={12} domain={['dataMin - 0.1', 'dataMax + 0.1']} />
@@ -36,8 +45,9 @@ const PriceChart: React.FC<PriceChartProps> = ({ history }) => {
               type="monotone"
               dataKey={source}
               stroke={colors[source as keyof typeof colors] || '#fff'}
-              strokeWidth={2}
+              strokeWidth={3}
               dot={false}
+              style={{ filter: 'url(#glow)' }}
             />
           ))}
         </LineChart>

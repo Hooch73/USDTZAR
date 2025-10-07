@@ -26,5 +26,9 @@ export const usePriceHistory = (prices: AllPrices) => {
     }
   }, [prices]);
 
-  return history;
+  const getSparklineData = (source: keyof AllPrices) => {
+    return history.slice(-10).map(h => ({ value: h[source] }));
+  };
+
+  return { history, getSparklineData };
 };

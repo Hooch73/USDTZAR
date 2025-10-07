@@ -26,23 +26,29 @@ const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ prices }) => {
   const cryptoSources = [PriceSource.VALR, PriceSource.BinanceZA, PriceSource.Yellowcard];
 
   return (
-    <div className="bg-surface-0 p-6 rounded-lg shadow-lg border border-surface-1">
-      <h3 className="font-bold text-xl mb-4 text-text-primary">Arbitrage Premium</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="bg-surface/50 border border-card-border rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+      <h3 className="font-bold text-xl mb-4 text-content-primary">Arbitrage Premium</h3>
+      <div className="space-y-4">
         {cryptoSources.map(source => {
           const premium = calculatePremium(prices[source].price);
           const isLoading = prices[source].loading || prices[PriceSource.Forex].loading;
 
           return (
-            <div key={source} className="bg-surface-1 p-4 rounded-lg text-center">
-              <p className="font-semibold text-text-secondary text-sm mb-1">{source}</p>
-              {isLoading ? (
-                <div className="h-8 bg-surface-0 rounded w-1/2 mx-auto mt-1 animate-pulse"></div>
-              ) : (
-                <p className={`text-2xl font-bold ${getPremiumColor(premium)}`}>
-                  {premium !== null ? `${premium.toFixed(2)}%` : 'N/A'}
-                </p>
-              )}
+            <div key={source} className="grid grid-cols-[100px_1fr_50px] items-center gap-4">
+              <span className="font-semibold text-content-secondary text-sm">{source}</span>
+              <div className="w-full bg-surface rounded-full h-4">
+                {isLoading ? (
+                  <div className="bg-surface-1 h-4 rounded-full animate-pulse"></div>
+                ) : (
+                  <div 
+                    className={`h-4 rounded-full ${getPremiumColor(premium)} transition-all duration-500`}
+                    style={{ width: `${Math.min(Math.abs(premium || 0) * 20, 100)}%` }}
+                  ></div>
+                )}
+              </div>
+              <span className={`font-bold text-sm ${getPremiumColor(premium)}`}>
+                {premium !== null ? `${premium.toFixed(2)}%` : 'N/A'}
+              </span>
             </div>
           );
         })}
