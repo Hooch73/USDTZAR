@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { usePriceFetcher } from './hooks/usePriceFetcher';
 import { usePriceHistory } from './hooks/usePriceHistory';
 import PriceCard from './components/PriceCard';
@@ -18,11 +19,23 @@ const App: React.FC = () => {
       <Header prices={prices} refresh={refresh} />
       <main className="container mx-auto p-4 md:p-8 space-y-8">
         <QuickStats prices={prices} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <motion.div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.1,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+        >
           {Object.values(prices).map(data => (
             <PriceCard key={data.source} data={data} sparklineData={getSparklineData(data.source)} forexRate={prices[PriceSource.Forex].price} />
           ))}
-        </div>
+        </motion.div>
 
         <PremiumCalculator prices={prices} />
 

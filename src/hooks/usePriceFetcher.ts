@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { PriceSource } from '../types';
 import type { AllPrices } from '../types';
 import { getValrUsdtZarPrice } from '../services/valrApi';
-import { getBinanceUsdtZarPrice, getBinanceGlobalUsdUsdtPrice } from '../services/binanceApi';
+import { getBinanceUsdtZarPrice, fetchBinanceGlobalUSDT } from '../services/binanceApi';
 import { getYellowcardUsdtZarPrice } from '../services/yellowcardScraper';
 import { getUsdZarForexRate } from '../services/forexApi';
 
@@ -34,7 +34,7 @@ export const usePriceFetcher = () => {
     fetchAndUpdate(PriceSource.BinanceZA, getBinanceUsdtZarPrice);
     fetchAndUpdate(PriceSource.Yellowcard, getYellowcardUsdtZarPrice);
     fetchAndUpdate(PriceSource.Forex, getUsdZarForexRate);
-    fetchAndUpdate(PriceSource.BinanceGlobal, getBinanceGlobalUsdUsdtPrice);
+    fetchAndUpdate(PriceSource.BinanceGlobal, fetchBinanceGlobalUSDT);
   }, []);
 
   useEffect(() => {
