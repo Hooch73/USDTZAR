@@ -5,6 +5,7 @@ import { usePriceHistory } from './hooks/usePriceHistory';
 import PriceCard from './components/PriceCard';
 import PremiumCalculator from './components/PremiumCalculator';
 import PriceChart from './components/PriceChart';
+import EffectiveRatesSection from './components/EffectiveRatesSection';
 import StatusBar from './components/StatusBar';
 import Header from './components/layout/Header';
 import QuickStats from './components/QuickStats';
@@ -38,6 +39,8 @@ const App: React.FC = () => {
             <PriceCard key={data.source} data={data} sparklineData={getSparklineData(data.source)} forexRate={prices[PriceSource.Forex].price} />
           ))}
         </motion.div>
+
+        <EffectiveRatesSection prices={prices} />
 
         <PremiumCalculator prices={prices} />
 
