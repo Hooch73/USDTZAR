@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Calculator, Info, TrendingDown } from 'lucide-react';
 import EffectiveRateCard from './EffectiveRateCard';
 import { calculateEffectiveRate } from '../config/exchangeFees';
@@ -11,51 +11,63 @@ interface EffectiveRatesSectionProps {
 }
 
 const EffectiveRatesSection: React.FC<EffectiveRatesSectionProps> = ({ prices }) => {
-  // Calculate effective rates for exchanges that trade ZAR/USDT
-  const calculateRates = (): EffectiveRate[] => {
+  
+  const effectiveRates = useMemo((): EffectiveRate[] => {
     const rates: EffectiveRate[] = [];
 
-    // VALR
     if (prices[PriceSource.VALR].price) {
       rates.push(calculateEffectiveRate(PriceSource.VALR, prices[PriceSource.VALR].price!));
     }
 
-    // Binance ZA
     if (prices[PriceSource.BinanceZA].price) {
       rates.push(calculateEffectiveRate(PriceSource.BinanceZA, prices[PriceSource.BinanceZA].price!));
     }
 
-    // Yellowcard
     if (prices[PriceSource.Yellowcard].price) {
       rates.push(calculateEffectiveRate(PriceSource.Yellowcard, prices[PriceSource.Yellowcard].price!));
     }
 
     return rates;
-  };
+  }, [prices[PriceSource.VALR].price, prices[PriceSource.BinanceZA].price, prices[PriceSource.Yellowcard].price]);
 
-  const effectiveRates = calculateRates();
+  // Memoize cheapest calculations
+  const { cheapestMaker, cheapestTaker, absoluteCheapest, absoluteCheapestRate } = useMemo(() => {
+    if (effectiveRates.length === 0) {
+      return { 
+        cheapestMaker: null, 
+        cheapestTaker: null, 
+        absoluteCheapest: null, 
+        absoluteCheapestRate: 0 
+      };
+    }
 
-  if (effectiveRates.length === 0) {
+    const maker = effectiveRates.reduce((min, rate) => 
+      rate.effectiveMakerRate < min.effectiveMakerRate ? rate : min
+    , effectiveRates[0]);
+
+    const taker = effectiveRates.reduce((min, rate) => 
+      rate.effectiveTakerRate < min.effectiveTakerRate ? rate : min
+    , effectiveRates[0]);
+
+    const absolute = maker.effectiveMakerRate < taker.effectiveTakerRate 
+      ? { ...maker, type: 'Maker' as const }
+      : { ...taker, type: 'Taker' as const };
+
+    const rate = absolute.type === 'Maker' 
+      ? absolute.effectiveMakerRate 
+      : absolute.effectiveTakerRate;
+
+    return {
+      cheapestMaker: maker,
+      cheapestTaker: taker,
+      absoluteCheapest: absolute,
+      absoluteCheapestRate: rate
+    };
+  }, [effectiveRates]);
+
+  if (effectiveRates.length === 0 || !cheapestMaker || !cheapestTaker || !absoluteCheapest) {
     return null;
   }
-
-  // Find cheapest maker and taker rates
-  const cheapestMaker = effectiveRates.reduce((min, rate) => 
-    rate.effectiveMakerRate < min.effectiveMakerRate ? rate : min
-  , effectiveRates[0]);
-
-  const cheapestTaker = effectiveRates.reduce((min, rate) => 
-    rate.effectiveTakerRate < min.effectiveTakerRate ? rate : min
-  , effectiveRates[0]);
-
-  // Find absolute cheapest option
-  const absoluteCheapest = cheapestMaker.effectiveMakerRate < cheapestTaker.effectiveTakerRate 
-    ? { ...cheapestMaker, type: 'Maker' as const }
-    : { ...cheapestTaker, type: 'Taker' as const };
-
-  const absoluteCheapestRate = absoluteCheapest.type === 'Maker' 
-    ? absoluteCheapest.effectiveMakerRate 
-    : absoluteCheapest.effectiveTakerRate;
 
   return (
     <section className="space-y-4">

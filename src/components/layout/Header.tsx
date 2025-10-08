@@ -1,4 +1,6 @@
 import React from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { LogOut } from 'lucide-react';
 import { PriceSource } from '../../types';
 import type { AllPrices } from '../../types';
 import { format } from 'date-fns';
@@ -9,6 +11,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ prices, refresh }) => {
+  const { logout } = useAuth();
   const calculatePremium = (usdtZarRate: number | null, forexRate: number | null) => {
     if (usdtZarRate === null || forexRate === null) return null;
     return ((usdtZarRate / forexRate) - 1) * 100;
@@ -58,8 +61,16 @@ const Header: React.FC<HeaderProps> = ({ prices, refresh }) => {
             <button 
               onClick={refresh} 
               className="bg-primary/20 hover:bg-primary/40 text-primary font-bold p-2 rounded-lg transition-colors duration-300"
+              aria-label="Refresh prices"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h5M20 20v-5h-5M20 4l-5 5M4 20l5-5"></path></svg>
+            </button>
+            <button 
+              onClick={logout} 
+              className="bg-danger/20 hover:bg-danger/40 text-danger font-bold p-2 rounded-lg transition-colors duration-300"
+              aria-label="Logout"
+            >
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>

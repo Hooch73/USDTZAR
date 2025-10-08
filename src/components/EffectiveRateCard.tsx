@@ -163,4 +163,4 @@ const EffectiveRateCard: React.FC<EffectiveRateCardProps> = ({
   );
 };
 
-export default EffectiveRateCard;
+export default React.memo(EffectiveRateCard);
