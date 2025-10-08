@@ -11,8 +11,16 @@ interface PriceCardProps {
   forexRate: number | null;
 }
 
+const sourceUrls: { [key in PriceSource]?: string } = {
+  [PriceSource.VALR]: 'https://www.valr.com/buy/usdt',
+  [PriceSource.BinanceZA]: 'https://www.binance.com/en/trade/USDT_ZAR',
+  [PriceSource.Yellowcard]: 'https://yellowcard.io/',
+  [PriceSource.BinanceGlobal]: 'https://www.binance.com/en/trade/USDT_USD',
+};
+
 const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate }) => {
   const { source, price, lastUpdate, loading, error } = data;
+  const url = sourceUrls[source];
 
   const calculatePremium = () => {
     if (price === null || forexRate === null) return null;
@@ -39,7 +47,7 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
 
   if (loading) {
     return (
-      <div className="bg-card-background/50 border border-card-border rounded-2xl p-6 shadow-lg animate-pulse backdrop-blur-sm">
+      <div className="bg-card-bg/50 border border-card-border rounded-2xl p-6 shadow-lg animate-pulse backdrop-blur-sm">
         <div className="h-6 bg-surface rounded w-3/4 mb-4"></div>
         <div className="h-10 bg-surface rounded w-1/2 mb-4"></div>
         <div className="h-12 bg-surface rounded w-full"></div>
@@ -47,8 +55,8 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
     );
   }
 
-  return (
-    <div className="bg-card-background border border-card-border rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-shadow duration-300 group hover:scale-[1.02] transform">
+  const CardContent = () => (
+    <div className={`bg-card-bg border border-card-border rounded-2xl p-6 shadow-card transition-shadow duration-300 group ${url ? 'hover:shadow-card-hover hover:scale-[1.02] transform cursor-pointer' : ''}`}>
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
           {getLogo()}
@@ -72,6 +80,16 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
       </div>
     </div>
   );
+
+  if (url) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        <CardContent />
+      </a>
+    );
+  }
+
+  return <CardContent />;
 };
 
 export default PriceCard;
