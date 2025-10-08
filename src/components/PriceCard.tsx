@@ -14,8 +14,9 @@ interface PriceCardProps {
 const sourceUrls: { [key in PriceSource]?: string } = {
   [PriceSource.VALR]: 'https://www.valr.com/buy/usdt',
   [PriceSource.BinanceZA]: 'https://www.binance.com/en/trade/USDT_ZAR',
-  [PriceSource.Yellowcard]: 'https://yellowcard.io/',
-  [PriceSource.BinanceGlobal]: 'https://www.binance.com/en/trade/USDT_USD',
+  [PriceSource.Yellowcard]: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLzrx4jp8kbj_t8Kr1GdFdkmZ9uolMJGmYtgeqSQMdYq0djxkgJ8FIwKD7EdvvdA6NLV5NdSV3CpX7/pubhtml?gid=1120080669&single=true',
+  [PriceSource.BinanceGlobal]: 'https://www.binance.com/en/convert/USDT/USD',
+  [PriceSource.Forex]: 'https://www.tradingview.com/chart/?symbol=FX:USDZAR',
 };
 
 const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate }) => {
@@ -55,8 +56,8 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
     );
   }
 
-  const CardContent = () => (
-    <div className={`bg-card-bg border border-card-border rounded-2xl p-6 shadow-card transition-shadow duration-300 group ${url ? 'hover:shadow-card-hover hover:scale-[1.02] transform cursor-pointer' : ''}`}>
+  return (
+    <div className="bg-card-bg border border-card-border rounded-2xl p-6 shadow-card flex flex-col h-full">
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-3">
           {getLogo()}
@@ -73,23 +74,20 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
         <div className="text-sm text-content-secondary">{source === PriceSource.Forex ? 'ZAR per USD' : source === PriceSource.BinanceGlobal ? 'USDT per USD' : 'ZAR per USDT'}</div>
       </div>
 
-      <MiniSparkline data={sparklineData} color={premium === null ? '#6b7280' : premium > 0 ? '#10b981' : '#ef4444'} />
+      <MiniSparkline data={sparklineData} color={premium === null ? '#6b7280' : premium < 0 ? '#10b981' : '#ef4444'} />
 
-      <div className="text-xs text-content-muted mt-4">
-        {lastUpdate ? `Updated: ${format(lastUpdate, 'HH:mm:ss')}` : ''}
+      <div className="flex-grow"></div>
+
+      <div className="text-xs text-content-muted mt-4 flex justify-between items-center">
+        <span>{lastUpdate ? `Updated: ${format(lastUpdate, 'HH:mm:ss')}` : ''}</span>
+        {url && (
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            Link to Source Data
+          </a>
+        )}
       </div>
     </div>
   );
-
-  if (url) {
-    return (
-      <a href={url} target="_blank" rel="noopener noreferrer">
-        <CardContent />
-      </a>
-    );
-  }
-
-  return <CardContent />;
 };
 
 export default PriceCard;
