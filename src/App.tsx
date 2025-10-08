@@ -32,7 +32,9 @@ const App: React.FC = () => {
           initial="hidden"
           animate="visible"
         >
-          {Object.values(prices).map(data => (
+          {Object.values(prices)
+            .sort((a, b) => (b.price ?? -1) - (a.price ?? -1))
+            .map(data => (
             <PriceCard key={data.source} data={data} sparklineData={getSparklineData(data.source)} forexRate={prices[PriceSource.Forex].price} />
           ))}
         </motion.div>

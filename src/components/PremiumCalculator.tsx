@@ -29,9 +29,14 @@ const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ prices }) => {
     <div className="bg-surface/50 border border-card-border rounded-2xl p-6 shadow-lg backdrop-blur-sm">
       <h3 className="font-bold text-xl mb-4 text-content-primary">Arbitrage Premium</h3>
       <div className="space-y-4">
-        {cryptoSources.map(source => {
-          const premium = calculatePremium(prices[source].price);
-          const isLoading = prices[source].loading || prices[PriceSource.Forex].loading;
+        {cryptoSources
+          .map(source => ({
+            source,
+            premium: calculatePremium(prices[source].price),
+          }))
+          .sort((a, b) => (a.premium ?? Infinity) - (b.premium ?? Infinity))
+          .map(({ source, premium }) => {
+                    const isLoading = prices[source].loading || prices[PriceSource.Forex].loading;
 
           return (
             <div key={source} className="grid grid-cols-[100px_1fr_50px] items-center gap-4">
