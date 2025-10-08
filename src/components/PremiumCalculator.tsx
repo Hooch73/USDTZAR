@@ -18,8 +18,8 @@ const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ prices }) => {
 
   const getPremiumColor = (premium: number | null) => {
     if (premium === null) return 'text-gray-400';
-    if (premium > 2) return 'text-green-500';
-    if (premium > 0) return 'text-yellow-500';
+    if (premium < -2) return 'text-green-500';
+    if (premium < 0) return 'text-yellow-500';
     return 'text-red-500';
   };
 

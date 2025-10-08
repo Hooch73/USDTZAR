@@ -23,14 +23,14 @@ const Header: React.FC<HeaderProps> = ({ prices, refresh }) => {
   }));
 
   const bestOpportunity = premiums.reduce((best, current) => 
-    (current.premium !== null && (best.premium === null || current.premium > best.premium)) ? current : best
+    (current.premium !== null && (best.premium === null || current.premium < best.premium)) ? current : best
   , { source: null as PriceSource | null, premium: null as number | null });
 
   const getStatus = () => {
     if (bestOpportunity.premium === null) return { text: 'Connecting...', color: 'bg-neutral' };
-    if (bestOpportunity.premium > 2) return { text: `🟢 Strong Arbitrage: ${bestOpportunity.premium.toFixed(2)}% on ${bestOpportunity.source}`, color: 'bg-success' };
-    if (bestOpportunity.premium > 0.5) return { text: `🟡 Moderate Opportunity: ${bestOpportunity.premium.toFixed(2)}% on ${bestOpportunity.source}`, color: 'bg-warning' };
-    return { text: '⚪ No Significant Opportunity', color: 'bg-neutral' };
+    if (bestOpportunity.premium < -2) return { text: `🟢 Cheapest Source: ${bestOpportunity.source} @ ${bestOpportunity.premium.toFixed(2)}%`, color: 'bg-success' };
+    if (bestOpportunity.premium < 0) return { text: `🟡 Cheaper Source: ${bestOpportunity.source} @ ${bestOpportunity.premium.toFixed(2)}%`, color: 'bg-warning' };
+    return { text: '⚪ No Significant Discount', color: 'bg-neutral' };
   };
 
   const status = getStatus();
@@ -42,12 +42,12 @@ const Header: React.FC<HeaderProps> = ({ prices, refresh }) => {
         <div className="flex justify-between items-center py-4 border-b border-card-border">
           <div className="flex items-center gap-3">
             <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-            <h1 className="text-xl font-bold text-content-primary hidden md:block">USDT/ZAR Arbitrage</h1>
+            <h1 className="text-xl font-bold text-content-primary hidden md:block">USDT/ZAR Rate Comparison</h1>
           </div>
 
           {bestOpportunity.premium !== null && (
             <div className={`px-4 py-2 rounded-lg text-sm font-bold text-white ${status.color} animate-pulse`}>
-              Best Opportunity: {bestOpportunity.source} @ {bestOpportunity.premium.toFixed(2)}%
+              Cheapest Source: {bestOpportunity.source} @ {bestOpportunity.premium.toFixed(2)}%
             </div>
           )}
 

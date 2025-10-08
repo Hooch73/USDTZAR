@@ -54,7 +54,7 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
           {getLogo()}
           <div>
             <h3 className="text-lg font-semibold text-content-primary">{source}</h3>
-            <p className="text-xs text-content-muted">{source === PriceSource.Forex ? 'USD/ZAR Spot' : 'USDT/ZAR'}</p>
+            <p className="text-xs text-content-muted">{source === PriceSource.Forex ? 'USD/ZAR Spot' : source === PriceSource.BinanceGlobal ? 'USD / USDT' : 'USDT/ZAR'}</p>
           </div>
         </div>
         {premium !== null && <PremiumBadge premium={premium} />}
@@ -62,7 +62,7 @@ const PriceCard: React.FC<PriceCardProps> = ({ data, sparklineData, forexRate })
 
       <div className="mb-4">
         <div className="text-4xl font-bold text-content-primary tabular-nums">{error ? 'Error' : price ? price.toFixed(4) : 'N/A'}</div>
-        <div className="text-sm text-content-secondary">{source === PriceSource.Forex ? 'ZAR per USD' : 'ZAR per USDT'}</div>
+        <div className="text-sm text-content-secondary">{source === PriceSource.Forex ? 'ZAR per USD' : source === PriceSource.BinanceGlobal ? 'USDT per USD' : 'ZAR per USDT'}</div>
       </div>
 
       <MiniSparkline data={sparklineData} color={premium === null ? '#6b7280' : premium > 0 ? '#10b981' : '#ef4444'} />
